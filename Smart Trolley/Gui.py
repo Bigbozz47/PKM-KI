@@ -57,10 +57,21 @@ def hapus_item():
         update_tabel()
         hitung_total()
 
+def on_table_click(event):
+    item = tree.item(tree.selection())
+    if item:
+        item_index = int(item['text']) - 1
+        if belanjaan[item_index]['kuantitas'] > 1:
+            belanjaan[item_index]['kuantitas'] -= 1
+            belanjaan[item_index]['total'] -= belanjaan[item_index]['harga']
+        else:
+            del belanjaan[item_index]
+        update_tabel()
+        hitung_total()
 
 def on_barcode_scan(event):
     id_barang = id_entry.get()
-    if len(id_barang) == 13:  # Sesuaikan dengan panjang barcode GM66 (contoh: 8992761002015)
+    if len(id_barang) <= 13:  # Sesuaikan dengan panjang barcode GM66 (contoh: 8992761002015)
         tambah_ke_tabel(id_barang, 1)
         id_entry.delete(0, 'end')  # Menghapus isi input field setelah pemindaian
 
@@ -68,7 +79,7 @@ def update_tabel():
     for i in tree.get_children():
         tree.delete(i)
     for index, item in enumerate(belanjaan):
-        tree.insert("", "end", values=(f"{index+1}", item['nama'], item['harga'], item['kuantitas'], item['total']))
+        tree.insert("", "end", text=f"{index+1}", values=(item['nama'], item['harga'], item['kuantitas'], item['total']))
 
 # Membuat jendela utama
 window = tk.Tk()
@@ -111,12 +122,15 @@ tree.configure(yscrollcommand=vsb.set)
 tree.pack(fill='both', expand=True)
 
 # Tombol untuk menghapus item barang
-hapus_button = ttk.Button(window, text="Hapus", command=hapus_item)
-hapus_button.pack()
+# hapus_button = ttk.Button(window, text="Hapus", command=hapus_item)
+# hapus_button.pack()
 
 # Label untuk menampilkan total keseluruhan harga barang belanjaan
 total_label = tk.Label(window, text="", font='calibri 24')
 total_label.pack()
+
+# Event binding untuk menghapus item saat item di tabel diklik
+tree.bind('<ButtonRelease-1>', on_table_click)
 
 # Memulai GUI loop
 window.mainloop()
