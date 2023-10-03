@@ -79,11 +79,11 @@ def update_tabel():
     for i in tree.get_children():
         tree.delete(i)
     for index, item in enumerate(belanjaan):
-        tree.insert("", "end", text=f"{index+1}", values=(item['nama'], item['harga'], item['kuantitas'], item['total']))
+        tree.insert("", "end", text=f"{index+1}", values=(item['id'], item['nama'], item['kuantitas'], item['total']))
 
 # Membuat jendela utama
 window = tk.Tk()
-window.title('Mart Trolley')
+window.title('Smart Trolley')
 window.geometry('800x400')
 
 # Title
@@ -108,12 +108,31 @@ info_barang.pack()
 frame = ttk.Frame(window)
 frame.pack(padx=10, pady=10, fill='both', expand=True)
 
-tree = ttk.Treeview(frame, columns=("No.", "Nama Barang", "Harga", "Kuantitas", "Total"), show="headings")
-tree.heading("No.", text="No.")
+tree = ttk.Treeview(frame, columns=("ID Barang", "Nama Barang", "Kuantitas", "Total"), show="headings")
+# tree.heading("No.", text="No.")
+tree.heading("ID Barang", text="ID Barang")
 tree.heading("Nama Barang", text="Nama Barang")
-tree.heading("Harga", text="Harga")
 tree.heading("Kuantitas", text="Kuantitas")
 tree.heading("Total", text="Total")
+
+vsb = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
+vsb.pack(side='right', fill='y')
+tree.configure(yscrollcommand=vsb.set)
+
+tree.pack(fill='both', expand=True)
+
+# Mengubah tampilan tabel
+style = ttk.Style()
+style.configure("Treeview",
+                background="white",
+                foreground="black",
+                rowheight=25,
+                fieldbackground="lightgray",
+                font=('calibri', 14))
+
+style.map("Treeview",
+          background=[('selected', 'red')],
+          foreground=[('selected', 'white')])
 
 vsb = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
 vsb.pack(side='right', fill='y')
